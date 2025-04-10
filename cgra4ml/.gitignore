@@ -1,0 +1,82 @@
+old/
+__pycache__
+
+temp/
+
+run/fpga/*
+
+run/asic/*
+!deepsocflow/asic/reports
+
+*.pickle
+*.h5
+*.keras
+deepsocflow/test/vectors
+deepsocflow/test/xsim
+deepsocflow/test/dnn_engine_tb.vcd
+deepsocflow/test/xsc*
+deepsocflow/test/obj_dir
+deepsocflow/test/models
+deepsocflow/test/temp
+
+deepsocflow/test/py/*
+
+.svls.toml
+.svlint.toml
+
+**/vectors/*
+run/work/build/*
+run/work/dsf*
+run/work_resnet
+run/work_temp
+run/work_ccd
+run/work_dddd
+run/work_llm
+run/work_example
+run/work_resnet18
+run/work_pointnet
+run/work/project_1
+
+# Vivado and verilator sim
+run/work/.Xil*
+run/work/xsim/
+run/work/xsim/*
+run/work/verilator-sim/
+run/work/verilator-sim/*
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Sphinx documentation
+docs/**
+!docs/source
+docs/source/**
+!docs/source/conf.py
+!docs/source/*.rst
+
+# VSCode
+settings.json
+.vscode

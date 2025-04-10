@@ -1,0 +1,5 @@
+run/build
+run/work*
+vivado
+.vscode
+docs/*.pptx
