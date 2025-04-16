@@ -1,1 +1,1 @@
-../../tb/testbench.sv
+../../rtl/sys/top.v

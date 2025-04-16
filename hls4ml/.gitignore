@@ -2,3 +2,6 @@ comp
 elab
 xsim
 **/run/work*
+**/xsim*
+*.log
+*.pb

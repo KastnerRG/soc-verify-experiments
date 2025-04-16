@@ -16,3 +16,11 @@
 ../../rtl/hdl/verilog/start_for_Block_myproject_axi_exit329_proc_U0.v
 ../../rtl/hdl/verilog/start_for_myproject_U0.v
 ../../rtl/hdl/verilog/start_for_relu_array_ap_fixed_16u_array_ap_fixed_16_2_5_3_0_16u_relu_config4_U0.v
+../../rtl/ext/alex_axi_dma_rd.sv
+../../rtl/ext/alex_axi_dma_wr.sv
+../../rtl/ext/alex_axilite_ram.sv
+../../rtl/ext/alex_axilite_rd.sv
+../../rtl/ext/alex_axilite_wr.sv
+../../rtl/ext/alex_axis_adapter_any.sv
+../../rtl/ext/alex_axis_adapter.sv
+../../rtl/sys/dma_controller.sv

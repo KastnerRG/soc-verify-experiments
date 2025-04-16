@@ -4,7 +4,7 @@
 #VHDL_SRCS := $(shell cat sources_vhdl.txt)
 
 WORK_DIR := run/work
-TB := testbench
+TB := top
 SNAPSHOT := $(TB)
 TCL := ../xsim_cfg.tcl
 
@@ -15,7 +15,7 @@ $(WORK_DIR):
 	mkdir -p $(WORK_DIR)
 
 comp: $(WORK_DIR)
-	cd $(WORK_DIR) && xvlog -f ../sources.txt && xvhdl -f ../sources_vhdl.txt && xvlog -f ../sources_tb.txt
+	cd $(WORK_DIR) && xvlog -f ../sources.txt -sv && xvhdl -f ../sources_vhdl.txt && xvlog -f ../sources_tb.txt
 	touch $@
 
 elab: comp
