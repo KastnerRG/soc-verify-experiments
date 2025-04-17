@@ -3,9 +3,9 @@
 #VLOG_SRCS := $(shell cat sources.txt)
 #VHDL_SRCS := $(shell cat sources_vhdl.txt)
 
-B = 16
-I = 16
-O = 16
+B ?= 8
+I ?= 8
+O ?= 8
 VALID_PROB = 50
 READY_PROB = 50
 
@@ -53,3 +53,9 @@ xsim: elab
 clean:
 	rm -rf $(WORK_DIR)*
 	-rm comp elab xsim
+
+# not just clean the sim files, but also the hls4ml project files
+deepclean: clean
+	-rm -rf *_prj/
+	-rm -rf *_result/
+	-rm -rf rtl/hdl/*

@@ -2,6 +2,11 @@ comp
 elab
 xsim
 **/run/work*
+**/rtl/hdl/**
 **/xsim*
 *.log
 *.pb
+**/*prj*
+**/*project*
+**/*result*
+**/*pycache*
