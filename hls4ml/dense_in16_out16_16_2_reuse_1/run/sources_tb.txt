@@ -1,1 +1,0 @@
-../../rtl/sys/top.v

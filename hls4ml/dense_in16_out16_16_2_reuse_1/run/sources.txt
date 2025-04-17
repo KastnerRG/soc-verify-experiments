@@ -24,3 +24,9 @@
 ../../rtl/ext/alex_axis_adapter_any.sv
 ../../rtl/ext/alex_axis_adapter.sv
 ../../rtl/sys/dma_controller.sv
+../../rtl/sys/top.v
+../../tb/ext/axi_addr.v
+../../tb/ext/skidbuffer.v
+../../tb/ext/zipcpu_axi2ram.v
+../../tb/top_ram.sv
+../../tb/top_tb.sv

@@ -112,7 +112,7 @@ wire [OUT_BUS_W-1:0]       m_tdata ;
 wire [AXIS_USER_WIDTH-1:0] m_tuser ;
 
 
-myproject_axi DUT (
+myproject_axi ACC_axis (
     .in_r_TDATA(s_tdata), // new variable
     .in_r_TLAST(s_tlast),
     .out_r_TDATA(m_tdata),
