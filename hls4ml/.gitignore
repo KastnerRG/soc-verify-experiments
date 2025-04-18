@@ -10,3 +10,4 @@ xsim
 **/*project*
 **/*result*
 **/*pycache*
+**/experiments
