@@ -87,12 +87,12 @@ def HLS_run_single_layer(n_in, n_out, bits, int_bits, reuse_factor):
     hls4ml.report.read_vivado_report(output_dir)
 
     # Copy the reports
-    if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
+    #if not os.path.exists(result_dir):
+    #    os.makedirs(result_dir)
 
-    rtl_dir = './rtl'
-    if not os.path.exists(rtl_dir):
-        os.makedirs(rtl_dir)
+    #rtl_dir = './rtl'
+    #if not os.path.exists(rtl_dir):
+    #    os.makedirs(rtl_dir)
     
     #shutil.copy(output_dir+'/myproject_prj/solution1/syn/report/myproject_csynth.rpt', result_dir+'/'+proj_name+'_csynth.rpt')
     #shutil.copytree(output_dir+'/myproject_prj/solution1/impl/ip/hdl', rtl_dir+'/hdl')
@@ -135,6 +135,10 @@ def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
     prefix = '../../'
     vlog_filelist = 'run/sources.txt'
     vhdl_filelist = 'run/sources_vhdl.txt'
+    log_sim = f'{proj_name}_sim.log'
+    profile_sim = f'{proj_name}_profile_sim.log'
+    log_vivado = f'{proj_name}_vivado.log'
+    profile_vivado = f'{proj_name}_profile_vivado.log'
 
     with open(vlog_filelist, 'w') as f:
         for d in dirs:
@@ -156,11 +160,24 @@ def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
 
     # Build, C, RTL, elab & run simulation
     subprocess.run(['make', 'clean'], check=True)
-    subprocess.run(['make', 'all',
-                    f'B={BATCH}',
-                    f'I={IN_SIZE}',
-                    f'O={OUT_SIZE}',
-                    ], check=True)
+    with open(log_sim, 'w') as log, open(profile_sim, 'w') as prof:
+        subprocess.run([
+            '/usr/bin/time', '-v',
+            'make', 'all',
+            f'B={BATCH}',
+            f'I={IN_SIZE}',
+            f'O={OUT_SIZE}'
+            ],
+            stdout=log, stderr=prof, check=True)
+    
+    # Run Vivado synth & impl
+    with open(log_vivado, 'w') as log, open(profile_vivado, 'w') as prof:
+        subprocess.run([
+            '/usr/bin/time', '-v',
+            'vivado', '-mode', 'batch',
+            '-source', 'design.tcl'
+            ],
+            cwd=output_dir, stdout=log, stderr=prof, check=True)
 
     return
 
