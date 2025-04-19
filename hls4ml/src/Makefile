@@ -10,7 +10,7 @@ VALID_PROB = 50
 READY_PROB = 50
 
 RUN_DIR = run
-WORK_DIR := run/work
+WORK_DIR ?= run/work
 DATA_DIR = $(WORK_DIR)/data
 FULL_DATA_DIR = $(abspath $(DATA_DIR))
 C_SOURCE = ../../c/sim.c
@@ -51,7 +51,7 @@ xsim: elab
 	touch $@
 
 clean:
-	rm -rf $(WORK_DIR)*
+	-rm -rf $(WORK_DIR)*
 	-rm comp elab xsim
 
 # not just clean the sim files, but also the hls4ml project files

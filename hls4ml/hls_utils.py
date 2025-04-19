@@ -17,11 +17,12 @@ from qkeras.qlayers import QDense, QActivation
 from qkeras.quantizers import quantized_bits, quantized_relu
 import hls4ml
 
-def HLS_run_single_layer(n_in, n_out, bits, int_bits, reuse_factor):
+def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor):
     os.environ['PATH'] += os.pathsep + '/tools/Xilinx/Vivado/2020.1/bin'
     np.random.seed(seed)
     tf.random.set_seed(seed)
 
+    LAYERS = layers
     IN_SIZE = n_in
     OUT_SIZE = n_out
     N = 1024
@@ -29,8 +30,8 @@ def HLS_run_single_layer(n_in, n_out, bits, int_bits, reuse_factor):
     INT = int_bits
     REUSE_FACTOR = reuse_factor
 
-    proj_name = 'dense_in%d_out%d_%d_%d_reuse_%d' % (IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
-    output_dir = 'dense_prj/'+proj_name
+    proj_name = 'dense_%d_in%d_out%d_%d_%d_reuse_%d' % (LAYERS, IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
+    output_dir = 'experiments/'+proj_name+'/hls4ml'
     result_dir = 'dense_result/'+proj_name
 
 
@@ -40,18 +41,19 @@ def HLS_run_single_layer(n_in, n_out, bits, int_bits, reuse_factor):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
     model = Sequential()
-    model.add(
-        QDense(
-            OUT_SIZE,
-            input_shape=(IN_SIZE,),
-            name='fc1',
-            kernel_quantizer=quantized_bits(BITS, INT, alpha=1),
-            bias_quantizer=quantized_bits(BITS, INT, alpha=1),
-            kernel_initializer='lecun_uniform',
-            kernel_regularizer=l1(0.0001),
+    for i in range(LAYERS):
+        model.add(
+            QDense(
+                OUT_SIZE,
+                input_shape=(IN_SIZE,),
+                #name='fc1',
+                kernel_quantizer=quantized_bits(BITS, INT, alpha=1),
+                bias_quantizer=quantized_bits(BITS, INT, alpha=1),
+                kernel_initializer='lecun_uniform',
+                kernel_regularizer=l1(0.0001),
+            )
         )
-    )
-    model.add(QActivation(quantized_relu(BITS, INT), name='relu1'))    
+        model.add(QActivation(quantized_relu(BITS, INT)))    
 
     model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
     model.fit(
@@ -101,8 +103,9 @@ def HLS_run_single_layer(n_in, n_out, bits, int_bits, reuse_factor):
     model.summary()
     return
 
-def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
+def SIM_run_single_layer(layers, batch, n_in, n_out, bits, int_bits, reuse_factor):
     os.environ['PATH'] += os.pathsep + '/tools/Xilinx/Vivado/2020.1/bin'
+    LAYERS = layers
     BATCH = batch
     IN_SIZE = n_in
     OUT_SIZE = n_out
@@ -110,12 +113,26 @@ def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
     BITS = bits
     INT = int_bits
     REUSE_FACTOR = reuse_factor
-    proj_name = 'dense_in%d_out%d_%d_%d_reuse_%d' % (IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
-    output_dir = 'dense_prj/'+proj_name
-    rtl_dir = './rtl'
+    proj_name = 'dense_%d_in%d_out%d_%d_%d_reuse_%d' % (LAYERS, IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
+    output_dir = 'experiments/'+proj_name+'/hls4ml'
+    src_dir  = 'src'
+    sim_dir = f'experiments/{proj_name}/sim'
+    rtl_dir = f'{sim_dir}/rtl'
+    dst_dir = f'{rtl_dir}/hdl'
+    work_dir_rel_sim = 'run/work'
+    work_dir = f'{sim_dir}/{work_dir_rel_sim}'
+
+    if os.path.exists(sim_dir):
+        shutil.rmtree(sim_dir)
+    shutil.copytree(src_dir, sim_dir)
+
+    if os.path.exists(work_dir):
+        shutil.rmtree(work_dir)
+    os.makedirs(work_dir)
+
     if not os.path.exists(rtl_dir):
         os.makedirs(rtl_dir)
-    dst_dir = rtl_dir + '/hdl'
+    
     if os.path.exists(dst_dir):
         shutil.rmtree(dst_dir)
     # Copy RTL files
@@ -123,30 +140,29 @@ def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
     
     # Source files
     dirs = [
-    './rtl/hdl/verilog',
-    './rtl/ext',
-    './rtl/sys',
-    './tb/ext',
-    './tb'
+        sim_dir+'/rtl/hdl/verilog',
+        sim_dir+'/rtl/ext',
+        sim_dir+'/rtl/sys',
+        sim_dir+'/tb/ext',
+        sim_dir+'/tb'
     ]
-    dir_vhdl = ['./rtl/hdl/ip']
+    dir_vhdl = [sim_dir+'/rtl/hdl/ip']
 
     # Base prefix to prepend to each printed path
-    prefix = '../../'
-    vlog_filelist = 'run/sources.txt'
-    vhdl_filelist = 'run/sources_vhdl.txt'
-    log_sim = f'{proj_name}_sim.log'
-    profile_sim = f'{proj_name}_profile_sim.log'
-    log_vivado = f'{proj_name}_vivado.log'
-    profile_vivado = f'{proj_name}_profile_vivado.log'
+    vlog_filelist = f'{sim_dir}/run/sources.txt'
+    vhdl_filelist = f'{sim_dir}/run/sources_vhdl.txt'
+    log_sim = f'{sim_dir}/{proj_name}_sim.log'
+    profile_sim = f'{sim_dir}/{proj_name}_profile_sim.log'
+    log_vivado = f'{sim_dir}/{proj_name}_vivado.log'
+    profile_vivado = f'{sim_dir}/{proj_name}_profile_vivado.log'
 
     with open(vlog_filelist, 'w') as f:
         for d in dirs:
             for root, _, files in os.walk(d):
                 for file in files:
                     full_path = os.path.join(root, file)
-                    rel_path = os.path.relpath(full_path, start='.')  # relative to current dir
-                    f.write(os.path.join(prefix, rel_path) + '\n')
+                    rel_path = os.path.relpath(full_path, start=work_dir)  # relative to current dir
+                    f.write(rel_path + '\n')
     f.close()
 
     with open (vhdl_filelist, 'w') as f:
@@ -154,22 +170,23 @@ def SIM_run_single_layer(batch, n_in, n_out, bits, int_bits, reuse_factor):
             for root, _, files in os.walk(d):
                 for file in files:
                     full_path = os.path.join(root, file)
-                    rel_path = os.path.relpath(full_path, start='.')  # relative to current dir
-                    f.write(os.path.join(prefix, rel_path) + '\n')
+                    rel_path = os.path.relpath(full_path, start=work_dir)  # relative to current dir
+                    f.write(rel_path + '\n')
     f.close()
-
+    
     # Build, C, RTL, elab & run simulation
-    subprocess.run(['make', 'clean'], check=True)
+    subprocess.run(['make', 'clean'], check=True, cwd=sim_dir)
     with open(log_sim, 'w') as log, open(profile_sim, 'w') as prof:
         subprocess.run([
             '/usr/bin/time', '-v',
             'make', 'all',
             f'B={BATCH}',
             f'I={IN_SIZE}',
-            f'O={OUT_SIZE}'
+            f'O={OUT_SIZE}',
+            f'WORK_DIR={work_dir_rel_sim}'
             ],
-            stdout=log, stderr=prof, check=True)
-    
+            cwd=sim_dir, stdout=log, stderr=prof, check=True)
+
     # Run Vivado synth & impl
     with open(log_vivado, 'w') as log, open(profile_vivado, 'w') as prof:
         subprocess.run([

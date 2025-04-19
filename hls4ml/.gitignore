@@ -3,7 +3,7 @@ elab
 xsim
 **/run/work*
 **/rtl/hdl/**
-**/xsim*
+**/xsim.*
 *.log
 *.pb
 **/*prj*
@@ -11,3 +11,4 @@ xsim
 **/*result*
 **/*pycache*
 **/experiments
+dense_*

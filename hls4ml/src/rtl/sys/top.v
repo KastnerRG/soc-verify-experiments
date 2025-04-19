@@ -100,16 +100,16 @@ module top #(
 
 localparam IN_BUS_W = 32;
 localparam OUT_BUS_W = 32;
-wire                       s_tvalid;
-wire                       s_tready;
-wire                       s_tlast ;
-wire [IN_BUS_W-1:0]        s_tdata ;
-wire [AXIS_USER_WIDTH-1:0] s_tuser ;
-wire                       m_tvalid;
-wire                       m_tready;
-wire                       m_tlast ;
-wire [OUT_BUS_W-1:0]       m_tdata ;
-wire [AXIS_USER_WIDTH-1:0] m_tuser ;
+(* MARK_DEBUG = "TRUE" *) wire                       s_tvalid;
+(* MARK_DEBUG = "TRUE" *) wire                       s_tready;
+(* MARK_DEBUG = "TRUE" *) wire                       s_tlast ;
+(* MARK_DEBUG = "TRUE" *) wire [IN_BUS_W-1:0]        s_tdata ;
+                          wire [AXIS_USER_WIDTH-1:0] s_tuser ;
+(* MARK_DEBUG = "TRUE" *) wire                       m_tvalid;
+(* MARK_DEBUG = "TRUE" *) wire                       m_tready;
+(* MARK_DEBUG = "TRUE" *) wire                       m_tlast ;
+(* MARK_DEBUG = "TRUE" *) wire [OUT_BUS_W-1:0]       m_tdata ;
+                          wire [AXIS_USER_WIDTH-1:0] m_tuser ;
 
 
 myproject_axi ACC_axis (
