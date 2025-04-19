@@ -1,9 +1,10 @@
 `timescale 1ns/1ps
+`include "hw_params.svh"
 
 module top #(
     parameter
-        R  = 8,
-        C  = 4,
+        R  = `R,
+        C  = `C,
         WK = 8,
         WX = 8,
         WA = 32,
