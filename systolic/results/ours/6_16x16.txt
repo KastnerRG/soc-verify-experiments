@@ -1,0 +1,142 @@
+=== Iteration 6 ===
+R = 16, C = 16, K = 32
+
+rm -rf run/work*
+mkdir -p run/work
+mkdir -p run/work/data
+python run/golden.py --R 16 --K 32 --C 16 --DIR /home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data
+cd run/work && xsc ../../c/sim.c --gcc_compile_options -DSIM --gcc_compile_options -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ --gcc_compile_options -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data
+Multi-threading is on. Using 126 slave threads.
+Running compilation flow/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -DSIM -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data    -I"/tools/Xilinx/Vivado/2024.1/data/xsim/include" -I"/tools/Xilinx/Vivado/2024.1/data/xsim/systemc" "../../c/sim.c" -o "xsim.dir/work/xsc/sim.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
+Done compilation
+Linking with command:
+/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/g++ -Wa,-W  -O -fPIC  -m64  -shared  -o "xsim.dir/work/xsc/dpi.so" "xsim.dir/work/xsc/sim.lnx64.o"   -DSIM -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data   -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o -lrdi_simulator_kernel  -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -Wl,--disable-new-dtags -Wl,-rpath=/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -lrdi_xsim_systemc -std=c++11 -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/Default  -B/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ 
+
+Done linking: "xsim.dir/work/xsc/dpi.so"
+cd run/work && xvlog -f ../sources.txt  -sv -d "DIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/" -d "R=16" -d "C=16" -d "VALID_PROB=1000" -d "READY_PROB=1000" -i /home/a.gnaneswaran/soc-verify-experiments/systolic/run
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/run/config.svh" into library work
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sa/axis_sa.sv" into library work
+INFO: [VRFC 10-311] analyzing module axis_sa
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sa/mac.sv" into library work
+INFO: [VRFC 10-311] analyzing module mul
+INFO: [VRFC 10-311] analyzing module acc
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sa/n_delay.sv" into library work
+INFO: [VRFC 10-311] analyzing module n_delay
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sa/tri_buffer.sv" into library work
+INFO: [VRFC 10-311] analyzing module tri_buffer
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sys/top.v" into library work
+INFO: [VRFC 10-311] analyzing module top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sys/dma_controller.sv" into library work
+INFO: [VRFC 10-311] analyzing module dma_controller
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axi_dma_rd.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axi_dma_rd
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axi_dma_wr.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axi_dma_wr
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axilite_ram.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axilite_ram
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axilite_rd.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axilite_rd
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axilite_wr.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axilite_wr
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axis_adapter.sv" into library work
+INFO: [VRFC 10-311] analyzing module axis_adapter
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/ext/alex_axis_adapter_any.sv" into library work
+INFO: [VRFC 10-311] analyzing module alex_axis_adapter_any
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/top_ram.sv" into library work
+INFO: [VRFC 10-311] analyzing module top_ram
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/top_tb.sv" into library work
+INFO: [VRFC 10-311] analyzing module top_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/ext/axi_addr.v" into library work
+INFO: [VRFC 10-311] analyzing module axi_addr
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/ext/skidbuffer.v" into library work
+INFO: [VRFC 10-311] analyzing module skidbuffer
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/ext/zipcpu_axi2ram.v" into library work
+INFO: [VRFC 10-311] analyzing module zipcpu_axi2ram
+cd run/work && xelab top_tb --snapshot top_tb -log elaborate.log --debug typical -sv_lib dpi
+Vivado Simulator v2024.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: /tools/Xilinx/Vivado/2024.1/bin/unwrapped/lnx64.o/xelab top_tb --snapshot top_tb -log elaborate.log --debug typical -sv_lib dpi 
+Multi-threading is on. Using 126 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module work.skidbuffer(OPT_LOWPOWER=1'b0,OPT...
+Compiling module work.axi_addr(DW=128)
+Compiling module work.skidbuffer(OPT_LOWPOWER=1'b0,DW=...
+Compiling module work.zipcpu_axi2ram(C_S_AXI_ADDR_WIDT...
+Compiling module work.tri_buffer(N=16)
+Compiling module work.n_delay(N=33,W=1)
+Compiling module work.n_delay(N=0,W=16)
+Compiling module work.mul(WX=8)
+Compiling module work.n_delay(N=0,W=32)
+Compiling module work.acc(WX=16,WY=32)
+Compiling module work.axis_sa(R=16,C=16,WX=8,WY=32)
+Compiling module work.alex_axis_adapter_any(S_DATA_WID...
+Compiling module work.axis_adapter(S_DATA_WIDTH=128,S_...
+Compiling module work.alex_axis_adapter_any(S_DATA_WID...
+Compiling module work.axis_adapter(S_DATA_WIDTH=512,S_...
+Compiling module work.alex_axis_adapter_any(S_DATA_WID...
+Compiling module work.alex_axilite_wr_default
+Compiling module work.alex_axilite_rd_default
+Compiling module work.alex_axilite_ram(TIMEOUT=2)
+Compiling module work.dma_controller(AXIS_USER_WIDTH=8...
+Compiling module work.alex_axi_dma_rd(AXI_MAX_BURST_LE...
+Compiling module work.alex_axi_dma_wr(AXI_MAX_BURST_LE...
+Compiling module work.top(R=16,C=16,AXI_STRB_WIDTH=16)
+Compiling module work.top_ram(R=16,C=16,WA=32,WY=32,AX...
+Compiling module work.top_tb
+Built simulation snapshot top_tb
+cd run/work && xsim top_tb --tclbatch ../xsim_cfg.tcl
+
+****** xsim v2024.1 (64-bit)
+  **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Sat Apr 19 13:40:56 2025
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/top_tb/xsim_script.tcl
+# xsim {top_tb} -autoloadwcfg -tclbatch {../xsim_cfg.tcl}
+Time resolution is 1 ps
+source ../xsim_cfg.tcl
+## log_wave -recursive * 
+## run all 
+DEBUG: Reading from file /home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/kxa.bin 
+DEBUG: Writing to file /home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/y.bin 
+
+
+Verification successful: Output matches Expected data. 
+Error count: 0
+
+
+$finish called at time : 1435010 ps : File "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/top_tb.sv" Line 180
+## exit
+INFO: [Common 17-206] Exiting xsim at Sat Apr 19 13:40:58 2025...
+	Command being timed: "make xsim R=16 C=16 K=32 VALID_PROB=1000 READY_PROB=1000"
+	User time (seconds): 17.14
+	System time (seconds): 1.37
+	Percent of CPU this job got: 200%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.22
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 726328
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 2000
+	Minor (reclaiming a frame) page faults: 413889
+	Voluntary context switches: 55095
+	Involuntary context switches: 69
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 44688
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
