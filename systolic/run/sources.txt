@@ -5,6 +5,7 @@
 ../../rtl/sa/tri_buffer.sv
 ../../rtl/sys/top.v
 ../../rtl/sys/dma_controller.sv
+../../rtl/sys/hw_params.svh
 ../../rtl/ext/alex_axi_dma_rd.sv
 ../../rtl/ext/alex_axi_dma_wr.sv
 ../../rtl/ext/alex_axilite_ram.sv
