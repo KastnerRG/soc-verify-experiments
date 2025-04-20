@@ -1,2 +1,2 @@
-`define R 64
+`define R 32
 `define C 64
