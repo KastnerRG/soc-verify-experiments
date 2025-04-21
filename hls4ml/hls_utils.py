@@ -17,7 +17,7 @@ from qkeras.qlayers import QDense, QActivation
 from qkeras.quantizers import quantized_bits, quantized_relu
 import hls4ml
 
-def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor):
+def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor, board='zcu102'):
     os.environ['PATH'] += os.pathsep + '/tools/Xilinx/Vivado/2020.1/bin'
     np.random.seed(seed)
     tf.random.set_seed(seed)
@@ -29,9 +29,14 @@ def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor):
     BITS = bits
     INT = int_bits
     REUSE_FACTOR = reuse_factor
+    BOARD, PART, EXP_HEAD = 'zcu102', 'xczu9eg-ffvb1156-2-e', 'experiments'
+    if board == 'alveo-u250':
+        BOARD, PART, EXP_HEAD = 'alveo-u250', 'xcu250-figd2104-2L-e', 'experiments_u250'
+
+
 
     proj_name = 'dense_%d_in%d_out%d_%d_%d_reuse_%d' % (LAYERS, IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
-    output_dir = 'experiments/'+proj_name+'/hls4ml'
+    output_dir = f'{EXP_HEAD}/{proj_name}/hls4ml'
     result_dir = 'dense_result/'+proj_name
 
 
@@ -77,8 +82,8 @@ def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor):
         hls_config=config, 
         backend='VivadoAccelerator', 
         output_dir=output_dir, 
-        board='zcu102',
-        part='xczu9eg-ffvb1156-2-e',
+        board=BOARD,
+        part=PART,
         clock_period=4.5,
         io_type='io_stream',
         interface="axi_stream"
@@ -103,7 +108,7 @@ def HLS_run_single_layer(layers, n_in, n_out, bits, int_bits, reuse_factor):
     model.summary()
     return
 
-def SIM_run_single_layer(layers, batch, n_in, n_out, bits, int_bits, reuse_factor):
+def SIM_run_single_layer(layers, batch, n_in, n_out, bits, int_bits, reuse_factor, board='zcu102'):
     os.environ['PATH'] += os.pathsep + '/tools/Xilinx/Vivado/2020.1/bin'
     LAYERS = layers
     BATCH = batch
@@ -113,10 +118,11 @@ def SIM_run_single_layer(layers, batch, n_in, n_out, bits, int_bits, reuse_facto
     BITS = bits
     INT = int_bits
     REUSE_FACTOR = reuse_factor
+    EXP_HEAD = 'experiments_u250' if board == 'alveo-u250' else 'experiments'
     proj_name = 'dense_%d_in%d_out%d_%d_%d_reuse_%d' % (LAYERS, IN_SIZE, OUT_SIZE, BITS, INT, REUSE_FACTOR) 
-    output_dir = 'experiments/'+proj_name+'/hls4ml'
+    output_dir = f'{EXP_HEAD}/{proj_name}/hls4ml'
     src_dir  = 'src'
-    sim_dir = f'experiments/{proj_name}/sim'
+    sim_dir = f'{EXP_HEAD}/{proj_name}/sim'
     rtl_dir = f'{sim_dir}/rtl'
     dst_dir = f'{rtl_dir}/hdl'
     work_dir_rel_sim = 'run/work'
@@ -188,6 +194,11 @@ def SIM_run_single_layer(layers, batch, n_in, n_out, bits, int_bits, reuse_facto
             cwd=sim_dir, stdout=log, stderr=prof, check=True)
 
     # Run Vivado synth & impl
+    if board == 'alveo-u250':
+        xo_dir = f'{output_dir}/xo_files'
+        if not os.path.exists(xo_dir):
+            os.makedirs(xo_dir)
+
     with open(log_vivado, 'w') as log, open(profile_vivado, 'w') as prof:
         subprocess.run([
             '/usr/bin/time', '-v',

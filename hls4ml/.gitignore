@@ -11,4 +11,6 @@ xsim
 **/*result*
 **/*pycache*
 **/experiments
+**/experiments_*
 dense_*
+alveo_*
