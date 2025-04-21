@@ -82,115 +82,115 @@ module cgra4ml_axi2ram_tb #(
     localparam	LSB = $clog2(C_S_AXI_DATA_WIDTH)-3                
 )(
     // axilite interface for configuration
-    input  wire                   clk,
-    input  wire                   rstn,
+    input  logic                   clk,
+    input  logic                   rstn,
 
     /*
      * AXI-Lite slave interface
      */
-    input  wire [AXIL_ADDR_WIDTH-1:0]  s_axil_awaddr,
-    input  wire [2:0]             s_axil_awprot,
-    input  wire                   s_axil_awvalid,
-    output wire                   s_axil_awready,
-    input  wire [DATA_WR_WIDTH-1:0]  s_axil_wdata,
-    input  wire [STRB_WIDTH-1:0]  s_axil_wstrb,
-    input  wire                   s_axil_wvalid,
-    output wire                   s_axil_wready,
-    output wire [1:0]             s_axil_bresp,
-    output wire                   s_axil_bvalid,
-    input  wire                   s_axil_bready,
-    input  wire [AXIL_ADDR_WIDTH-1:0]  s_axil_araddr,
-    input  wire [2:0]             s_axil_arprot,
-    input  wire                   s_axil_arvalid,
-    output wire                   s_axil_arready,
-    output wire [DATA_RD_WIDTH-1:0]  s_axil_rdata,
-    output wire [1:0]             s_axil_rresp,
-    output wire                   s_axil_rvalid,
-    input  wire                   s_axil_rready,
+    input  logic [AXIL_ADDR_WIDTH-1:0]  s_axil_awaddr,
+    input  logic [2:0]             s_axil_awprot,
+    input  logic                   s_axil_awvalid,
+    output logic                   s_axil_awready,
+    input  logic [DATA_WR_WIDTH-1:0]  s_axil_wdata,
+    input  logic [STRB_WIDTH-1:0]  s_axil_wstrb,
+    input  logic                   s_axil_wvalid,
+    output logic                   s_axil_wready,
+    output logic [1:0]             s_axil_bresp,
+    output logic                   s_axil_bvalid,
+    input  logic                   s_axil_bready,
+    input  logic [AXIL_ADDR_WIDTH-1:0]  s_axil_araddr,
+    input  logic [2:0]             s_axil_arprot,
+    input  logic                   s_axil_arvalid,
+    output logic                   s_axil_arready,
+    output logic [DATA_RD_WIDTH-1:0]  s_axil_rdata,
+    output logic [1:0]             s_axil_rresp,
+    output logic                   s_axil_rvalid,
+    input  logic                   s_axil_rready,
     
     // ram rw interface for interacting with DDR in sim
-    output wire                   o_rd_pixel,
-    output wire   [C_S_AXI_ADDR_WIDTH-LSB-1:0]   o_raddr_pixel,
-    input  wire   [C_S_AXI_DATA_WIDTH-1:0]       i_rdata_pixel,
+    output logic                   o_rd_pixel,
+    output logic   [C_S_AXI_ADDR_WIDTH-LSB-1:0]   o_raddr_pixel,
+    input  logic   [C_S_AXI_DATA_WIDTH-1:0]       i_rdata_pixel,
 
-    output wire                   o_rd_weights,
-    output wire   [C_S_AXI_ADDR_WIDTH-LSB-1:0]   o_raddr_weights,
-    input  wire  [C_S_AXI_DATA_WIDTH-1:0]       i_rdata_weights,
+    output logic                   o_rd_weights,
+    output logic   [C_S_AXI_ADDR_WIDTH-LSB-1:0]   o_raddr_weights,
+    input  logic  [C_S_AXI_DATA_WIDTH-1:0]       i_rdata_weights,
 
-    output wire                   o_we_output,
-    output wire  [C_S_AXI_ADDR_WIDTH-LSB-1:0]    o_waddr_output,
-    output wire  [C_S_AXI_DATA_WIDTH-1:0]        o_wdata_output,
-    output wire  [C_S_AXI_DATA_WIDTH/8-1:0]      o_wstrb_output
+    output logic                   o_we_output,
+    output logic  [C_S_AXI_ADDR_WIDTH-LSB-1:0]    o_waddr_output,
+    output logic  [C_S_AXI_DATA_WIDTH-1:0]        o_wdata_output,
+    output logic  [C_S_AXI_DATA_WIDTH/8-1:0]      o_wstrb_output
 );
 
 // AXI ports from top on-chip module
-    wire [AXI_ID_WIDTH-1:0]    m_axi_pixel_arid;
-    wire [AXI_ADDR_WIDTH-1:0]  m_axi_pixel_araddr;
-    wire [7:0]                 m_axi_pixel_arlen;
-    wire [2:0]                 m_axi_pixel_arsize;
-    wire [1:0]                 m_axi_pixel_arburst;
-    wire                       m_axi_pixel_arlock;
-    wire [3:0]                 m_axi_pixel_arcache;
-    wire [2:0]                 m_axi_pixel_arprot;
-    wire                       m_axi_pixel_arvalid;
-    wire                       m_axi_pixel_arvalid_zipcpu;
-    wire                       m_axi_pixel_arready;
-    wire                       m_axi_pixel_arready_zipcpu;
-    wire [AXI_ID_WIDTH-1:0]    m_axi_pixel_rid;
-    wire [AXI_DATA_WIDTH_PS-1:0]  m_axi_pixel_rdata;
-    wire [1:0]                 m_axi_pixel_rresp;
-    wire                       m_axi_pixel_rlast;
-    wire                       m_axi_pixel_rvalid;
-    wire                       m_axi_pixel_rvalid_zipcpu;
-    wire                       m_axi_pixel_rready;
-    wire                       m_axi_pixel_rready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_pixel_arid;
+    logic [AXI_ADDR_WIDTH-1:0]  m_axi_pixel_araddr;
+    logic [7:0]                 m_axi_pixel_arlen;
+    logic [2:0]                 m_axi_pixel_arsize;
+    logic [1:0]                 m_axi_pixel_arburst;
+    logic                       m_axi_pixel_arlock;
+    logic [3:0]                 m_axi_pixel_arcache;
+    logic [2:0]                 m_axi_pixel_arprot;
+    logic                       m_axi_pixel_arvalid;
+    logic                       m_axi_pixel_arvalid_zipcpu;
+    logic                       m_axi_pixel_arready;
+    logic                       m_axi_pixel_arready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_pixel_rid;
+    logic [AXI_DATA_WIDTH_PS-1:0]  m_axi_pixel_rdata;
+    logic [1:0]                 m_axi_pixel_rresp;
+    logic                       m_axi_pixel_rlast;
+    logic                       m_axi_pixel_rvalid;
+    logic                       m_axi_pixel_rvalid_zipcpu;
+    logic                       m_axi_pixel_rready;
+    logic                       m_axi_pixel_rready_zipcpu;
 
-    wire [AXI_ID_WIDTH-1:0]    m_axi_weights_arid;
-    wire [AXI_ADDR_WIDTH-1:0]  m_axi_weights_araddr;
-    wire [7:0]                 m_axi_weights_arlen;
-    wire [2:0]                 m_axi_weights_arsize;
-    wire [1:0]                 m_axi_weights_arburst;
-    wire                       m_axi_weights_arlock;
-    wire [3:0]                 m_axi_weights_arcache;
-    wire [2:0]                 m_axi_weights_arprot;
-    wire                       m_axi_weights_arvalid;
-    wire                       m_axi_weights_arvalid_zipcpu;
-    wire                       m_axi_weights_arready;
-    wire                       m_axi_weights_arready_zipcpu;
-    wire [AXI_ID_WIDTH-1:0]    m_axi_weights_rid;
-    wire [AXI_DATA_WIDTH_PS-1:0]  m_axi_weights_rdata;
-    wire [1:0]                 m_axi_weights_rresp;
-    wire                       m_axi_weights_rlast;
-    wire                       m_axi_weights_rvalid;
-    wire                       m_axi_weights_rvalid_zipcpu;
-    wire                       m_axi_weights_rready;
-    wire                       m_axi_weights_rready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_weights_arid;
+    logic [AXI_ADDR_WIDTH-1:0]  m_axi_weights_araddr;
+    logic [7:0]                 m_axi_weights_arlen;
+    logic [2:0]                 m_axi_weights_arsize;
+    logic [1:0]                 m_axi_weights_arburst;
+    logic                       m_axi_weights_arlock;
+    logic [3:0]                 m_axi_weights_arcache;
+    logic [2:0]                 m_axi_weights_arprot;
+    logic                       m_axi_weights_arvalid;
+    logic                       m_axi_weights_arvalid_zipcpu;
+    logic                       m_axi_weights_arready;
+    logic                       m_axi_weights_arready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_weights_rid;
+    logic [AXI_DATA_WIDTH_PS-1:0]  m_axi_weights_rdata;
+    logic [1:0]                 m_axi_weights_rresp;
+    logic                       m_axi_weights_rlast;
+    logic                       m_axi_weights_rvalid;
+    logic                       m_axi_weights_rvalid_zipcpu;
+    logic                       m_axi_weights_rready;
+    logic                       m_axi_weights_rready_zipcpu;
 
-    wire [AXI_ID_WIDTH-1:0]    m_axi_output_awid;
-    wire [AXI_ADDR_WIDTH-1:0]  m_axi_output_awaddr;
-    wire [7:0]                 m_axi_output_awlen;
-    wire [2:0]                 m_axi_output_awsize;
-    wire [1:0]                 m_axi_output_awburst;
-    wire                       m_axi_output_awlock;
-    wire [3:0]                 m_axi_output_awcache;
-    wire [2:0]                 m_axi_output_awprot;
-    wire                       m_axi_output_awvalid;
-    wire                       m_axi_output_awvalid_zipcpu;
-    wire                       m_axi_output_awready;
-    wire                       m_axi_output_awready_zipcpu;
-    wire [AXI_DATA_WIDTH_PS-1:0]  m_axi_output_wdata;
-    wire [AXI_STRB_WIDTH-1:0]  m_axi_output_wstrb;
-    wire                       m_axi_output_wlast;
-    wire                       m_axi_output_wvalid;
-    wire                       m_axi_output_wvalid_zipcpu;
-    wire                       m_axi_output_wready;
-    wire                       m_axi_output_wready_zipcpu;
-    wire [AXI_ID_WIDTH-1:0]    m_axi_output_bid;
-    wire [1:0]                 m_axi_output_bresp;
-    wire                       m_axi_output_bvalid;
-    wire                       m_axi_output_bvalid_zipcpu;
-    wire                       m_axi_output_bready;
-    wire                       m_axi_output_bready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_output_awid;
+    logic [AXI_ADDR_WIDTH-1:0]  m_axi_output_awaddr;
+    logic [7:0]                 m_axi_output_awlen;
+    logic [2:0]                 m_axi_output_awsize;
+    logic [1:0]                 m_axi_output_awburst;
+    logic                       m_axi_output_awlock;
+    logic [3:0]                 m_axi_output_awcache;
+    logic [2:0]                 m_axi_output_awprot;
+    logic                       m_axi_output_awvalid;
+    logic                       m_axi_output_awvalid_zipcpu;
+    logic                       m_axi_output_awready;
+    logic                       m_axi_output_awready_zipcpu;
+    logic [AXI_DATA_WIDTH_PS-1:0]  m_axi_output_wdata;
+    logic [AXI_STRB_WIDTH-1:0]  m_axi_output_wstrb;
+    logic                       m_axi_output_wlast;
+    logic                       m_axi_output_wvalid;
+    logic                       m_axi_output_wvalid_zipcpu;
+    logic                       m_axi_output_wready;
+    logic                       m_axi_output_wready_zipcpu;
+    logic [AXI_ID_WIDTH-1:0]    m_axi_output_bid;
+    logic [1:0]                 m_axi_output_bresp;
+    logic                       m_axi_output_bvalid;
+    logic                       m_axi_output_bvalid_zipcpu;
+    logic                       m_axi_output_bready;
+    logic                       m_axi_output_bready_zipcpu;
 
     logic rand_pixel_ar;
     logic rand_pixel_r;
@@ -202,8 +202,8 @@ module cgra4ml_axi2ram_tb #(
 
     // Randomizer for AXI4 requests
     always_ff @( posedge clk ) begin
-        rand_pixel_r    <= $urandom_range(0, 1000) < VALID_PROB;
         rand_pixel_ar   <= $urandom_range(0, 1000) < VALID_PROB;
+        rand_pixel_r    <= $urandom_range(0, 1000) < VALID_PROB;
         rand_weights_r  <= $urandom_range(0, 1000) < VALID_PROB;
         rand_weights_ar <= $urandom_range(0, 1000) < VALID_PROB;
         rand_output_aw  <= $urandom_range(0, 1000) < READY_PROB;
@@ -211,23 +211,15 @@ module cgra4ml_axi2ram_tb #(
         rand_output_b   <= $urandom_range(0, 1000) < READY_PROB;
     end
 
-    assign m_axi_pixel_arvalid_zipcpu   = rand_pixel_ar & m_axi_pixel_arvalid;
-    assign m_axi_pixel_arready          = rand_pixel_ar & m_axi_pixel_arready_zipcpu;
-    assign m_axi_pixel_rvalid           = rand_pixel_r  & m_axi_pixel_rvalid_zipcpu;
-    assign m_axi_pixel_rready_zipcpu    = rand_pixel_r  & m_axi_pixel_rready;
-
-    assign m_axi_weights_arvalid_zipcpu = rand_weights_ar & m_axi_weights_arvalid;
-    assign m_axi_weights_arready        = rand_weights_ar & m_axi_weights_arready_zipcpu;
-    assign m_axi_weights_rvalid         = rand_weights_r  & m_axi_weights_rvalid_zipcpu;
-    assign m_axi_weights_rready_zipcpu  = rand_weights_r  & m_axi_weights_rready;
-
-    assign m_axi_output_awvalid_zipcpu = rand_output_aw & m_axi_output_awvalid;
-    assign m_axi_output_awready        = rand_output_aw & m_axi_output_awready_zipcpu;
-    assign m_axi_output_wvalid_zipcpu  = rand_output_w  & m_axi_output_wvalid;
-    assign m_axi_output_wready         = rand_output_w  & m_axi_output_wready_zipcpu;
-    assign m_axi_output_bvalid         = rand_output_b  & m_axi_output_bvalid_zipcpu;
-    assign m_axi_output_bready_zipcpu  = rand_output_b  & m_axi_output_bready;
-
+    always_comb begin
+        {m_axi_pixel_arvalid_zipcpu, m_axi_pixel_arready    } = {2{rand_pixel_ar  }} & {m_axi_pixel_arvalid, m_axi_pixel_arready_zipcpu    };
+        {m_axi_pixel_rvalid, m_axi_pixel_rready_zipcpu      } = {2{rand_pixel_r   }} & {m_axi_pixel_rvalid_zipcpu, m_axi_pixel_rready      };
+        {m_axi_weights_arvalid_zipcpu, m_axi_weights_arready} = {2{rand_weights_ar}} & {m_axi_weights_arvalid, m_axi_weights_arready_zipcpu};
+        {m_axi_weights_rvalid, m_axi_weights_rready_zipcpu  } = {2{rand_weights_r }} & {m_axi_weights_rvalid_zipcpu, m_axi_weights_rready  };
+        {m_axi_output_awvalid_zipcpu, m_axi_output_awready  } = {2{rand_output_aw }} & {m_axi_output_awvalid, m_axi_output_awready_zipcpu  };
+        {m_axi_output_wvalid_zipcpu, m_axi_output_wready    } = {2{rand_output_w  }} & {m_axi_output_wvalid, m_axi_output_wready_zipcpu    };
+        {m_axi_output_bvalid, m_axi_output_bready_zipcpu    } = {2{rand_output_b  }} & {m_axi_output_bvalid_zipcpu, m_axi_output_bready    };
+    end
 
 zipcpu_axi2ram #(
     .C_S_AXI_ID_WIDTH(C_S_AXI_ID_WIDTH),
