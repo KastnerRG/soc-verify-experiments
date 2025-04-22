@@ -1,5 +1,6 @@
 #!/bin/bash
 out_dir="results/ours"
+set -e  # <-- Exit on error
 
 source /tools/Xilinx/Vivado/2024.1/settings64.sh 
 source /opt/xilinx/xrt/setup.sh
@@ -7,14 +8,14 @@ source /opt/xilinx/xrt/setup.sh
 mkdir -p $out_dir
 
 # Arrays of R and C values
-R_values=(2 2 4 4 8  8 16 16 32 32)
-C_values=(2 4 4 8 8 16 16 32 32 64)
+R_values=(2 2 4 4 8  8 16 16 32 32 64 64)
+C_values=(2 4 4 8 8 16 16 32 32 64 64 128)
 
 # Loop through each pair
 for i in "${!R_values[@]}"; do
     r=${R_values[$i]}
     c=${C_values[$i]}
-    k=$((r + c))
+    k=$((r + c + 2))
 
     outfile="${out_dir}/${i}_${r}x${c}.txt"
 

@@ -231,6 +231,41 @@ static inline void tile_write( i32 out_val, i8 *restrict p_out_buffer, i32 ib, B
   
 }
 
+// Rest of the helper functions used in simulation.
+#ifdef SIM
+
+extern EXT_C u32 addr_64to32(void* restrict addr){
+  u64 offset = (u64)addr - (u64)&mem_phy;
+  return (u32)offset + 0x20000000;
+}
+
+extern EXT_C u64 sim_addr_32to64(u32 addr){
+  return (u64)addr - (u64)0x20000000 + (u64)&mem_phy;
+}
+
+extern EXT_C u8 get_byte_a32 (u32 addr_32){
+  u64 addr = sim_addr_32to64(addr_32);
+  u8 val = *(u8*restrict)addr;
+  //debug_printf("get_byte_a32: addr32:0x%x, addr64:0x%lx, val:0x%x\n", addr_32, addr, val);
+  return val;
+}
+
+extern EXT_C void set_byte_a32 (u32 addr_32, u8 data){
+  u64 addr = sim_addr_32to64(addr_32);
+  *(u8*restrict)addr = data;
+}
+
+extern EXT_C void *get_mp(){
+  return &mem_phy;
+}
+#else
+
+u32 addr_64to32 (void* addr){
+  return (u32)addr;
+}
+
+#endif
+
 extern EXT_C u8 model_run(Memory_st *restrict mp, void *p_config) {
 
   static Bundle_t *restrict pb = &bundles[0];
@@ -290,10 +325,10 @@ DMA_WAIT:
 	              return 1; 
 
               char f_path_raw [1000], f_path_sum  [1000]; // make sure full f_path_raw is shorter than 1000
-              sprintf(f_path_raw, "%s/%0d_%0d_%0d_y_raw_sim.txt", DATA_DIR, ib, ip, it);
-              sprintf(f_path_sum, "%s/%0d_y_sum_sim.txt", DATA_DIR, ib);
-              FILE *fp_raw = fopen(f_path_raw, "a");
-              FILE *fp_sum = fopen(f_path_sum, "a");
+              // sprintf(f_path_raw, "%s/%0d_%0d_%0d_y_raw_sim.txt", DATA_DIR, ib, ip, it);
+              // sprintf(f_path_sum, "%s/%0d_y_sum_sim.txt", DATA_DIR, ib);
+              // FILE *fp_raw = fopen(f_path_raw, "a");
+              // FILE *fp_sum = fopen(f_path_sum, "a");
 #else
 		          while (!get_config(p_config, A_DONE_WRITE + ocm_bank)){
                 // in FPGA, wait for write done
@@ -329,8 +364,8 @@ DMA_WAIT:
 
                     // if out of bounds, early return
                     if (i_yh >= yh || i_yc >= yc) {
-                      if (ip == pb->p-1)
-                        sim_fprintf(fp_sum,"%d\n", 0);        // Save summed output
+                      // if (ip == pb->p-1)
+                      //   sim_fprintf(fp_sum,"%d\n", 0);        // Save summed output
                       goto PROCESS_AND_STORE_DONE;
                     }
 
@@ -352,7 +387,7 @@ DMA_WAIT:
                       mp->nhwc[iy_nhwc] += out_val;
                       goto PROCESS_AND_STORE_DONE;
                     }
-                    sim_fprintf(fp_sum,"%d\n", out_val); // Save summed output
+                    // sim_fprintf(fp_sum,"%d\n", out_val); // Save summed output
 
                     // ------ CONV STRIDING ------
                     div_ch = div(i_yh-pb->csh_shift, pb->csh);
@@ -476,14 +511,14 @@ DMA_WAIT:
 
 PROCESS_AND_STORE_DONE:
 
-                    sim_fprintf(fp_raw,"%d\n", raw_val); // Save raw output
+                    // sim_fprintf(fp_raw,"%d\n", raw_val); // Save raw output
                     sram_addr += 1;
                   }
                 }
               }
 #ifdef SIM
-              fclose(fp_sum);
-              fclose(fp_raw);
+              // fclose(fp_sum);
+              // fclose(fp_raw);
 #endif
               set_config(p_config, A_DONE_READ + ocm_bank, 1);
               debug_printf("%d-------- iw_kw2 %d done \n", ib, iw_kw2);
@@ -500,21 +535,21 @@ PROCESS_AND_STORE_DONE:
 
 #ifdef SIM
     char f_path_debug [1000];
-    sprintf(f_path_debug, "%s/%0d_y_nhwc_sim.txt", DATA_DIR, ib);
-    FILE *fp_debug = fopen(f_path_debug, "w");
-    for (i32 i=0; i<pb->debug_nhwc_words; i++)
-      sim_fprintf(fp_debug,"%d\n", mp->debug_nhwc[i]);
-    fclose(fp_debug);
+    // sprintf(f_path_debug, "%s/%0d_y_nhwc_sim.txt", DATA_DIR, ib);
+    // FILE *fp_debug = fopen(f_path_debug, "w");
+    // for (i32 i=0; i<pb->debug_nhwc_words; i++)
+    //   sim_fprintf(fp_debug,"%d\n", mp->debug_nhwc[i]);
+    // fclose(fp_debug);
 
-    char f_path_tiled [1000];
-    sprintf(f_path_tiled, "%s/%0d_y_tiled_sim.txt", DATA_DIR, ib);
-    FILE *fp_tiled = fopen(f_path_tiled, "w");
-    for (i32 i=0; i<pb->o_words; i++)
-      if (ib == N_BUNDLES-1)
-        if (pb->is_softmax) sim_fprintf(fp_tiled,"%f\n", (f32  )mp->y[i]);
-        else                sim_fprintf(fp_tiled,"%d\n", (i32)mp->y[i]);
-      else sim_fprintf(fp_tiled,"%d\n", mp->debug_tiled[i]);
-    fclose(fp_tiled);
+    // char f_path_tiled [1000];
+    // sprintf(f_path_tiled, "%s/%0d_y_tiled_sim.txt", DATA_DIR, ib);
+    // FILE *fp_tiled = fopen(f_path_tiled, "w");
+    // for (i32 i=0; i<pb->o_words; i++)
+    //   if (ib == N_BUNDLES-1)
+    //     if (pb->is_softmax) sim_fprintf(fp_tiled,"%f\n", (f32  )mp->y[i]);
+    //     else                sim_fprintf(fp_tiled,"%d\n", (i32)mp->y[i]);
+    //   else sim_fprintf(fp_tiled,"%d\n", mp->debug_tiled[i]);
+    // fclose(fp_tiled);
 
     if (ib != N_BUNDLES-1){
       char f_path_packed [1000];
@@ -531,44 +566,14 @@ PROCESS_AND_STORE_DONE:
 #ifdef SIM
   is_first_call = 1;
 #endif
+
+  debug_printf("baseaddr: %d, size:%lu\n", (int)addr_64to32(&mem_phy), sizeof(Memory_st));
+
   return 0;
 }
 
 
-// Rest of the helper functions used in simulation.
-#ifdef SIM
 
-extern EXT_C u32 addr_64to32(void* restrict addr){
-  u64 offset = (u64)addr - (u64)&mem_phy;
-  return (u32)offset + 0x20000000;
-}
-
-extern EXT_C u64 sim_addr_32to64(u32 addr){
-  return (u64)addr - (u64)0x20000000 + (u64)&mem_phy;
-}
-
-extern EXT_C u8 get_byte_a32 (u32 addr_32){
-  u64 addr = sim_addr_32to64(addr_32);
-  u8 val = *(u8*restrict)addr;
-  //debug_printf("get_byte_a32: addr32:0x%x, addr64:0x%lx, val:0x%x\n", addr_32, addr, val);
-  return val;
-}
-
-extern EXT_C void set_byte_a32 (u32 addr_32, u8 data){
-  u64 addr = sim_addr_32to64(addr_32);
-  *(u8*restrict)addr = data;
-}
-
-extern EXT_C void *get_mp(){
-  return &mem_phy;
-}
-#else
-
-u32 addr_64to32 (void* addr){
-  return (u32)addr;
-}
-
-#endif
 
 extern EXT_C void model_setup(Memory_st *restrict mp, void *p_config) {
 

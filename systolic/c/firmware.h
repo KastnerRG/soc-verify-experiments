@@ -44,11 +44,13 @@ extern EXT_C u8 run(Memory_st *restrict mp, void *p_config) {
 
     sprintf(f_path, "%skxa.bin", TO_STRING(DIR));
     fp = fopen(f_path, "rb");
-    debug_printf("DEBUG: Reading from file %s \n", f_path);
+    // debug_printf("DEBUG: Reading from file %s \n", f_path);
     if(!fp) debug_printf("ERROR! File not found: %s \n", f_path);
     bytes = fread(mp->k, 1, sizeof(mem_phy.k) + sizeof(mem_phy.x) + sizeof(mem_phy.a), fp);
     fclose(fp);
   #endif
+
+  debug_printf("Starting: s2mm_done %d\n", get_config(p_config, A_S2MM_DONE));
   
   // Start DMA
   set_config(p_config, A_MM2S_0_ADDR , addr_64to32(mem_phy.k));
@@ -63,14 +65,18 @@ extern EXT_C u8 run(Memory_st *restrict mp, void *p_config) {
 
 
   WAIT(!(get_config(p_config, A_S2MM_DONE)), DMA_WAIT);
+  // set_config(p_config, A_S2MM_DONE, 0);
+  // set_config(p_config, A_MM2S_0_DONE, 0);
+  // set_config(p_config, A_MM2S_1_DONE, 0);
 
   #ifdef SIM
     sprintf(f_path, "%sy.bin", TO_STRING(DIR));
     fp = fopen(f_path, "wb");
-    debug_printf("DEBUG: Writing to file %s \n", f_path);
+    // debug_printf("DEBUG: Writing to file %s \n", f_path);
     if(!fp) debug_printf("ERROR! File not found: %s \n", f_path);
     bytes = fwrite(mp->y, 1, sizeof(mem_phy.y), fp);
     fclose(fp);
+    DMA_WAIT_is_first_call = 1;
   #endif
   return 0;
 }
