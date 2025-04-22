@@ -137,7 +137,7 @@ module top_tb;
   initial begin
     $dumpfile("top_tb.vcd");
     $dumpvars();
-    #1000us;
+    #1000ms;
     $fatal(1, "Error: Timeout.");
   end
 
@@ -146,12 +146,20 @@ module top_tb;
 
   chandle mem_ptr_virtual, cfg_ptr_virtual;
   initial begin
-    rstn <= 0;
-    repeat(2) @(posedge clk) #10ps;
-    rstn <= 1;
-    mem_ptr_virtual = get_mp();
+      // rstn <= 0;
+      // repeat(2) @(posedge clk) #10ps;
+      // rstn <= 1;
+      // repeat(2) @(posedge clk) #10ps;
     
-    while (run(mem_ptr_virtual, cfg_ptr_virtual)) @(posedge clk) #10ps;
+    repeat(1000) begin
+      rstn <= 0;
+      repeat(2) @(posedge clk) #10ps;
+      rstn <= 1;
+      mem_ptr_virtual = get_mp();
+      repeat(2) @(posedge clk) #10ps;
+      while (run(mem_ptr_virtual, cfg_ptr_virtual)) @(posedge clk) #10ps;
+      repeat(2) @(posedge clk) #10ps;
+    end
 
 
     // Read from output & expected and compare

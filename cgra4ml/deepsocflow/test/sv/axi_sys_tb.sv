@@ -60,7 +60,6 @@ module axi_sys_tb;
   import "DPI-C" context function void model_setup(chandle mpv, chandle p_config);
   import "DPI-C" context function bit  model_run(chandle mpv, chandle p_config);
 
-
   function automatic int get_config(chandle config_base, input int offset);
     if (offset < 16)  return dut.OC_TOP.CONTROLLER.cfg        [offset   ];
     else              return dut.OC_TOP.CONTROLLER.sdp_ram.RAM[offset-16];
@@ -95,6 +94,31 @@ module axi_sys_tb;
   //   $finish;
   // end
 
+  integer file_trace;
+  int p_bytes, w_bytes, o_bytes, p_stall, w_stall, p_addr, w_addr, o_addr;
+  initial begin
+    file_trace = $fopen("trace.csv", "w");
+    if (file_trace == 0) begin
+        $display("ERROR: Could not open file.");
+        $finish;
+    end
+    wait(rstn);
+    forever begin
+      @(posedge clk);
+      
+      p_bytes = o_rd_pixel? C_S_AXI_DATA_WIDTH/8 : 0;
+      w_bytes = o_rd_weights? C_S_AXI_DATA_WIDTH/8 : 0;
+      o_bytes = o_we_output? $countones(o_wstrb_output) : 0;
+      p_stall = dut.m_axi_pixel_rready & ~dut.m_axi_pixel_rvalid_zipcpu;
+      w_stall = dut.m_axi_weights_rready & ~dut.m_axi_weights_rvalid_zipcpu;
+      p_addr  = o_rd_pixel  ? (o_raddr_pixel   << LSB) : 0;
+      w_addr  = o_rd_weights? (o_raddr_weights << LSB) : 0;
+      o_addr  = o_we_output ? (o_waddr_output  << LSB) : 0;
+
+      $fdisplay(file_trace, "%d,%d,%d,%d,%d,%d,%d,%d", p_bytes, w_bytes, o_bytes, p_stall, w_stall, p_addr, w_addr, o_addr);
+    end
+  end
+
   chandle mpv, cp;
   initial begin
     rstn = 0;
@@ -108,6 +132,7 @@ module axi_sys_tb;
     while (model_run(mpv, cp)) @(posedge clk) #10ps;
 
     print_output(mpv);
+    $fclose(file_trace);
     $finish;
   end
 

@@ -1,10 +1,10 @@
-=== Iteration 1 ===
-R = 2, C = 4, K = 8
+=== Iteration 0 ===
+R = 32, C = 64, K = 96
 
 rm -rf run/work*
 mkdir -p run/work
 mkdir -p run/work/data
-python run/golden.py --R 2 --K 8 --C 4 --DIR /home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data
+python run/golden.py --R 32 --K 96 --C 64 --DIR /home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data
 cd run/work && xsc ../../c/sim.c --gcc_compile_options -DSIM --gcc_compile_options -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ --gcc_compile_options -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data
 Multi-threading is on. Using 126 slave threads.
 Running compilation flow/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -DSIM -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data    -I"/tools/Xilinx/Vivado/2024.1/data/xsim/include" -I"/tools/Xilinx/Vivado/2024.1/data/xsim/systemc" "../../c/sim.c" -o "xsim.dir/work/xsc/sim.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
@@ -13,7 +13,7 @@ Linking with command:
 /tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/g++ -Wa,-W  -O -fPIC  -m64  -shared  -o "xsim.dir/work/xsc/dpi.so" "xsim.dir/work/xsc/sim.lnx64.o"   -DSIM -DDIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/ -I/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data   -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o -lrdi_simulator_kernel  -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -Wl,--disable-new-dtags -Wl,-rpath=/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -lrdi_xsim_systemc -std=c++11 -L/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/Default  -B/tools/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ 
 
 Done linking: "xsim.dir/work/xsc/dpi.so"
-cd run/work && xvlog -f ../sources.txt  -sv -d "DIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/" -d "R=2" -d "C=4" -d "VALID_PROB=1000" -d "READY_PROB=1000" -i /home/a.gnaneswaran/soc-verify-experiments/systolic/run
+cd run/work && xvlog -f ../sources.txt  -sv -d "DIR=/home/a.gnaneswaran/soc-verify-experiments/systolic/run/work/data/" -d "R=32" -d "C=64" -d "VALID_PROB=1000" -d "READY_PROB=1000" -i /home/a.gnaneswaran/soc-verify-experiments/systolic/run
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/run/config.svh" into library work
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/a.gnaneswaran/soc-verify-experiments/systolic/rtl/sa/axis_sa.sv" into library work
 INFO: [VRFC 10-311] analyzing module axis_sa
@@ -71,21 +71,21 @@ Compiling module work.skidbuffer(OPT_LOWPOWER=1'b0,OPT...
 Compiling module work.axi_addr(DW=128)
 Compiling module work.skidbuffer(OPT_LOWPOWER=1'b0,DW=...
 Compiling module work.zipcpu_axi2ram(C_S_AXI_ADDR_WIDT...
-Compiling module work.tri_buffer(N=2)
-Compiling module work.tri_buffer_default
-Compiling module work.n_delay(N=7,W=1)
+Compiling module work.tri_buffer(N=32)
+Compiling module work.tri_buffer(N=64)
+Compiling module work.n_delay(N=97,W=1)
 Compiling module work.n_delay(N=0,W=16)
 Compiling module work.mul(WX=8)
 Compiling module work.n_delay(N=0,W=32)
 Compiling module work.acc(WX=16,WY=32)
-Compiling module work.axis_sa(R=2,C=4,WX=8,WY=32)
+Compiling module work.axis_sa(R=32,C=64,WX=8,WY=32)
 Compiling module work.axis_adapter(S_DATA_WIDTH=128,S_...
 Compiling module work.alex_axis_adapter_any(S_DATA_WID...
 Compiling module work.axis_adapter(S_DATA_WIDTH=128,S_...
 Compiling module work.alex_axis_adapter_any(S_DATA_WID...
 Compiling module work.axis_adapter(S_DATA_WIDTH=128,S_...
 Compiling module work.alex_axis_adapter_any(S_DATA_WID...
-Compiling module work.axis_adapter(S_DATA_WIDTH=64,S_K...
+Compiling module work.axis_adapter(S_DATA_WIDTH=1024,S...
 Compiling module work.alex_axis_adapter_any(S_DATA_WID...
 Compiling module work.alex_axilite_wr_default
 Compiling module work.alex_axilite_rd_default
@@ -94,7 +94,7 @@ Compiling module work.dma_controller(AXIS_USER_WIDTH=8...
 Compiling module work.alex_axi_dma_rd(AXI_MAX_BURST_LE...
 Compiling module work.alex_axi_dma_wr(AXI_MAX_BURST_LE...
 Compiling module work.top(AXI_STRB_WIDTH=16)
-Compiling module work.top_ram(R=2,C=4,WA=32,WY=32,AXI_...
+Compiling module work.top_ram(R=32,C=64,WA=32,WY=32,AX...
 Compiling module work.top_tb
 Built simulation snapshot top_tb
 cd run/work && xsim top_tb --tclbatch ../xsim_cfg.tcl
@@ -103,7 +103,7 @@ cd run/work && xsim top_tb --tclbatch ../xsim_cfg.tcl
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Mon Apr 21 14:23:19 2025
+  **** Start of session at: Mon Apr 21 10:08:11 2025
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
@@ -1119,27 +1119,29 @@ Verification successful: Output matches Expected data.
 Error count: 0
 
 
-$finish called at time : 370055010 ps : File "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/top_tb.sv" Line 188
+$finish called at time : 10233985010 ps : File "/home/a.gnaneswaran/soc-verify-experiments/systolic/tb/top_tb.sv" Line 182
+run: Time (s): cpu = 00:21:03 ; elapsed = 00:31:17 . Memory (MB): peak = 1450.102 ; gain = 8.004 ; free physical = 39315 ; free virtual = 279265
 ## exit
-INFO: [Common 17-206] Exiting xsim at Mon Apr 21 14:23:24 2025...
-	Command being timed: "make xsim R=2 C=4 K=8 VALID_PROB=1000 READY_PROB=1000"
-	User time (seconds): 12.79
-	System time (seconds): 1.61
-	Percent of CPU this job got: 125%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.47
+INFO: xsimkernel Simulation Memory Usage: 153740 KB (Peak: 196596 KB), Simulation CPU Usage: 1875170 ms
+INFO: [Common 17-206] Exiting xsim at Mon Apr 21 10:39:32 2025...
+	Command being timed: "make xsim R=32 C=64 K=96 VALID_PROB=1000 READY_PROB=1000"
+	User time (seconds): 3220.10
+	System time (seconds): 128.07
+	Percent of CPU this job got: 176%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 31:31.96
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 728004
+	Maximum resident set size (kbytes): 2077776
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 2000
-	Minor (reclaiming a frame) page faults: 300382
-	Voluntary context switches: 13563
-	Involuntary context switches: 61
+	Minor (reclaiming a frame) page faults: 896855
+	Voluntary context switches: 586627
+	Involuntary context switches: 20720
 	Swaps: 0
 	File system inputs: 0
-	File system outputs: 227384
+	File system outputs: 61857544
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

@@ -192,34 +192,50 @@ module cgra4ml_axi2ram_tb #(
     logic                       m_axi_output_bready;
     logic                       m_axi_output_bready_zipcpu;
 
-    logic rand_pixel_ar;
-    logic rand_pixel_r;
+    logic weights_ar  ;
+    logic weights_r   ;
+
+    logic rand_pixel_ar  ;
+    logic rand_pixel_r   ;
     logic rand_weights_ar;
-    logic rand_weights_r;
+    logic rand_weights_r ;
     logic rand_output_aw;
     logic rand_output_w;
     logic rand_output_b;
 
     // Randomizer for AXI4 requests
+    // Always yield to output. Give to weights only if weights asks and 20% prob, else give to pixel all other times
+
     always_ff @( posedge clk ) begin
-        rand_pixel_ar   <= $urandom_range(0, 1000) < VALID_PROB;
-        rand_pixel_r    <= $urandom_range(0, 1000) < VALID_PROB;
-        rand_weights_r  <= $urandom_range(0, 1000) < VALID_PROB;
-        rand_weights_ar <= $urandom_range(0, 1000) < VALID_PROB;
-        rand_output_aw  <= $urandom_range(0, 1000) < READY_PROB;
-        rand_output_w   <= $urandom_range(0, 1000) < READY_PROB;
-        rand_output_b   <= $urandom_range(0, 1000) < READY_PROB;
+        rand_weights_r  <= $urandom_range(0, 10) < 2;
+        rand_weights_ar <= $urandom_range(0, 10) < 2;
     end
 
     always_comb begin
-        {m_axi_pixel_arvalid_zipcpu, m_axi_pixel_arready    } = {2{rand_pixel_ar  }} & {m_axi_pixel_arvalid, m_axi_pixel_arready_zipcpu    };
-        {m_axi_pixel_rvalid, m_axi_pixel_rready_zipcpu      } = {2{rand_pixel_r   }} & {m_axi_pixel_rvalid_zipcpu, m_axi_pixel_rready      };
-        {m_axi_weights_arvalid_zipcpu, m_axi_weights_arready} = {2{rand_weights_ar}} & {m_axi_weights_arvalid, m_axi_weights_arready_zipcpu};
-        {m_axi_weights_rvalid, m_axi_weights_rready_zipcpu  } = {2{rand_weights_r }} & {m_axi_weights_rvalid_zipcpu, m_axi_weights_rready  };
-        {m_axi_output_awvalid_zipcpu, m_axi_output_awready  } = {2{rand_output_aw }} & {m_axi_output_awvalid, m_axi_output_awready_zipcpu  };
-        {m_axi_output_wvalid_zipcpu, m_axi_output_wready    } = {2{rand_output_w  }} & {m_axi_output_wvalid, m_axi_output_wready_zipcpu    };
-        {m_axi_output_bvalid, m_axi_output_bready_zipcpu    } = {2{rand_output_b  }} & {m_axi_output_bvalid_zipcpu, m_axi_output_bready    };
+        assign weights_ar = m_axi_weights_arvalid & rand_weights_ar; // pixel has the bus
+        assign weights_r  = m_axi_weights_rvalid_zipcpu & rand_weights_r; // pixel has the bus
+
+        {m_axi_pixel_arvalid_zipcpu, m_axi_pixel_arready    } = {2{~weights_ar}} & {m_axi_pixel_arvalid, m_axi_pixel_arready_zipcpu    };
+        {m_axi_weights_arvalid_zipcpu, m_axi_weights_arready} = {2{ weights_ar}} & {m_axi_weights_arvalid, m_axi_weights_arready_zipcpu};
+        {m_axi_pixel_rvalid, m_axi_pixel_rready_zipcpu      } = {2{~weights_r }} & {m_axi_pixel_rvalid_zipcpu, m_axi_pixel_rready      };
+        {m_axi_weights_rvalid, m_axi_weights_rready_zipcpu  } = {2{ weights_r }} & {m_axi_weights_rvalid_zipcpu, m_axi_weights_rready  };
+        //Output always ready
+        {m_axi_output_awvalid_zipcpu, m_axi_output_awready  } = {m_axi_output_awvalid, m_axi_output_awready_zipcpu  };
+        {m_axi_output_wvalid_zipcpu, m_axi_output_wready    } = {m_axi_output_wvalid, m_axi_output_wready_zipcpu    };
+        {m_axi_output_bvalid, m_axi_output_bready_zipcpu    } = {m_axi_output_bvalid_zipcpu, m_axi_output_bready    };
     end
+
+
+    // always_comb begin
+    //     {m_axi_pixel_arvalid_zipcpu, m_axi_pixel_arready    } = {2{rand_pixel_ar  }} & {m_axi_pixel_arvalid, m_axi_pixel_arready_zipcpu    };
+    //     {m_axi_pixel_rvalid, m_axi_pixel_rready_zipcpu      } = {2{rand_pixel_r   }} & {m_axi_pixel_rvalid_zipcpu, m_axi_pixel_rready      };
+    //     {m_axi_weights_arvalid_zipcpu, m_axi_weights_arready} = {2{rand_weights_ar}} & {m_axi_weights_arvalid, m_axi_weights_arready_zipcpu};
+    //     {m_axi_weights_rvalid, m_axi_weights_rready_zipcpu  } = {2{rand_weights_r }} & {m_axi_weights_rvalid_zipcpu, m_axi_weights_rready  };
+    //     //Output always ready
+    //     {m_axi_output_awvalid_zipcpu, m_axi_output_awready  } = {2{rand_output_aw }} & {m_axi_output_awvalid, m_axi_output_awready_zipcpu  };
+    //     {m_axi_output_wvalid_zipcpu, m_axi_output_wready    } = {2{rand_output_w  }} & {m_axi_output_wvalid, m_axi_output_wready_zipcpu    };
+    //     {m_axi_output_bvalid, m_axi_output_bready_zipcpu    } = {2{rand_output_b  }} & {m_axi_output_bvalid_zipcpu, m_axi_output_bready    };
+    // end
 
 zipcpu_axi2ram #(
     .C_S_AXI_ID_WIDTH(C_S_AXI_ID_WIDTH),

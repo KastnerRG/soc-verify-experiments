@@ -17,7 +17,8 @@ import pprint
 
 from deepsocflow import *
 
-(SIM, SIM_PATH) = ('xsim', "F:/Xilinx/Vivado/2022.2/bin/") if os.name=='nt' else ('verilator', '')
+# (SIM, SIM_PATH) = ('xsim', "F:/Xilinx/Vivado/2022.2/bin/") if os.name=='nt' else ('verilator', '')
+(SIM, SIM_PATH) = ('xsim', "")
 
 '''
 Dataset
@@ -192,8 +193,8 @@ def product_dict(**kwargs):
                                         axi_width            = [ 128      ],
                                         config_baseaddr      = ["B0000000"],
                                         target_cpu_int_bits  = [ 32       ],
-                                        valid_prob           = [ 1       ],
-                                        ready_prob           = [ 1       ],
+                                        valid_prob           = [ 0.8   ],
+                                        ready_prob           = [ 1    ],
                                         data_dir             = ['vectors'],
                                     )))
 def test_dnn_engine(PARAMS):
